@@ -6,7 +6,7 @@ This is a skip list implementation written in Java. Also see https://crimsonglow
 
 Each method was profiled using different iteration probabilities to determine which value would yield the best, single-threaded performance. The profiler was run on an Intel i9-9900K CPU. On this platform, a value of 0.2 seemed to yield the best results for all operations. Detailed results are available [here](https://docs.google.com/spreadsheets/d/e/2PACX-1vRAu08PQzpnv4zY6eyUL8jLjV7qRw_Dfhfbaao6AMdtaZ9QvyzAksfys0sUp1WGNfsRT7cmDVcWyPvG/pubhtml), and the profiling code is available in [SkipListProfiler.java](SkipListProfiler.java).
 
-<div class="center">
+<div>
   <a href="skiplist-insertion-time.png">
     <img src="skiplist-insertion-time.png" alt="Insertion Time" width="25%">
   </a>

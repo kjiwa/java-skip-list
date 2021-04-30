@@ -94,8 +94,12 @@ public class SkipList<K extends Comparable<K>, V> implements Map<K, V> {
    * Creates a new skip list with default parameters.
    */
   public SkipList() {
+    this(DEFAULT_ITERATION_PROBABILITY);
+  }
+
+  protected SkipList(double iterationProbability) {
     random = new Random();
-    iterationProbability = DEFAULT_ITERATION_PROBABILITY;
+    this.iterationProbability = iterationProbability;
     clear();
   }
 

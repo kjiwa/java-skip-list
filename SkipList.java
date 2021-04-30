@@ -55,7 +55,7 @@ public class SkipList<K extends Comparable<K>, V> implements Map<K, V> {
   }
 
   // The default probability to use when selecting a random level.
-  private static final double DEFAULT_ITERATION_PROBABILITY = 0.5;
+  private static final double DEFAULT_ITERATION_PROBABILITY = 0.2;
 
   // The head of the list.
   private Node head;

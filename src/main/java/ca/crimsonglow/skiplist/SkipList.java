@@ -3,8 +3,7 @@ package ca.crimsonglow.skiplist;
 import java.util.*;
 
 /**
- * Skip lists are maps that use probabilistic balancing for insertion and
- * deletion algorithms.
+ * Skip lists are maps that use probabilistic balancing for insertion and deletion algorithms.
  */
 public class SkipList<K extends Comparable<K>, V> implements Map<K, V> {
     // The default probability to use when selecting a random level.
@@ -36,30 +35,14 @@ public class SkipList<K extends Comparable<K>, V> implements Map<K, V> {
         clear();
     }
 
-    // Gets the head node at the lowest level in the list.
-    private Node<K, V> getLowestHead() {
-        Node<K, V> cur = head;
-        while (cur.down != null) {
-            cur = cur.down;
-        }
-
-        return cur;
-    }
-
-    // Selects a random level by incrementing a counter a random number of times.
-    private long getRandomLevel() {
-        long level = 0;
-        while (level <= size && random.nextDouble() < iterationProbability) {
-            level++;
-        }
-
-        return level;
+    @Override
+    public int size() {
+        return size;
     }
 
     @Override
-    public void clear() {
-        head = new Node<>(null, null, 0, null, null);
-        size = 0;
+    public boolean isEmpty() {
+        return size == 0;
     }
 
     @Override
@@ -80,18 +63,6 @@ public class SkipList<K extends Comparable<K>, V> implements Map<K, V> {
         }
 
         return false;
-    }
-
-    @Override
-    public Set<Entry<K, V>> entrySet() {
-        Set<Entry<K, V>> result = new HashSet<>(size);
-        Node<K, V> cur = getLowestHead().next;
-        while (cur != null) {
-            result.add(new AbstractMap.SimpleEntry<>(cur.key, cur.value));
-            cur = cur.next;
-        }
-
-        return result;
     }
 
     @Override
@@ -119,23 +90,6 @@ public class SkipList<K extends Comparable<K>, V> implements Map<K, V> {
     }
 
     @Override
-    public boolean isEmpty() {
-        return size == 0;
-    }
-
-    @Override
-    public Set<K> keySet() {
-        Set<K> result = new HashSet<>(size);
-        Node<K, V> cur = getLowestHead().next;
-        while (cur != null) {
-            result.add(cur.key);
-            cur = cur.next;
-        }
-
-        return result;
-    }
-
-    @Override
     public V put(K key, V value) {
         if (key == null) {
             throw new NullPointerException();
@@ -154,8 +108,7 @@ public class SkipList<K extends Comparable<K>, V> implements Map<K, V> {
                 cur = cur.next;
             }
 
-            // If a node with the key already exists in the list, update the value
-            // and do not update the size of the list.
+            // If a node with the key already exists in the list, update the
             if (cur.isNextKeyEqualTo(key)) {
                 V prevValue = cur.next.value;
                 cur.next.value = value;
@@ -181,13 +134,6 @@ public class SkipList<K extends Comparable<K>, V> implements Map<K, V> {
 
         size++;
         return null;
-    }
-
-    @Override
-    public void putAll(Map<? extends K, ? extends V> m) {
-        for (Entry<? extends K, ? extends V> entry : m.entrySet()) {
-            put(entry.getKey(), entry.getValue());
-        }
     }
 
     @Override
@@ -224,8 +170,28 @@ public class SkipList<K extends Comparable<K>, V> implements Map<K, V> {
     }
 
     @Override
-    public int size() {
-        return size;
+    public void putAll(Map<? extends K, ? extends V> m) {
+        for (Entry<? extends K, ? extends V> entry : m.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
+    }
+
+    @Override
+    public void clear() {
+        head = new Node<>(null, null, 0, null, null);
+        size = 0;
+    }
+
+    @Override
+    public Set<K> keySet() {
+        Set<K> result = new HashSet<>(size);
+        Node<K, V> cur = getLowestHead().next;
+        while (cur != null) {
+            result.add(cur.key);
+            cur = cur.next;
+        }
+
+        return result;
     }
 
     @Override
@@ -241,6 +207,37 @@ public class SkipList<K extends Comparable<K>, V> implements Map<K, V> {
     }
 
     @Override
+    public Set<Entry<K, V>> entrySet() {
+        Set<Entry<K, V>> result = new HashSet<>(size);
+        Node<K, V> cur = getLowestHead().next;
+        while (cur != null) {
+            result.add(new AbstractMap.SimpleEntry<>(cur.key, cur.value));
+            cur = cur.next;
+        }
+
+        return result;
+    }
+
+    private long getRandomLevel() {
+        long level = 0;
+        while (level <= size && random.nextDouble() < iterationProbability) {
+            level++;
+        }
+
+        return level;
+    }
+
+    // Gets the head node at the lowest level in the list.
+    private Node<K, V> getLowestHead() {
+        Node<K, V> cur = head;
+        while (cur.down != null) {
+            cur = cur.down;
+        }
+
+        return cur;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == null) {
             return false;
@@ -252,7 +249,7 @@ public class SkipList<K extends Comparable<K>, V> implements Map<K, V> {
 
         SkipList<?, ?> other = (SkipList<?, ?>) o;
         return entrySet().equals(other.entrySet());
-    }
+    }    // Selects a random level by incrementing a counter a random number of times.
 
     private static class Node<K extends Comparable<K>, V> {
         public K key;
@@ -277,4 +274,6 @@ public class SkipList<K extends Comparable<K>, V> implements Map<K, V> {
             return (next != null && next.key.equals(key));
         }
     }
+
+
 }

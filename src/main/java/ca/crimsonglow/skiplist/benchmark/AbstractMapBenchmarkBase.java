@@ -15,20 +15,13 @@ public abstract class AbstractMapBenchmarkBase {
     protected Map<Integer, Integer> map = null;
     private Integer nextKey = 0;
 
-    protected abstract Map<Integer, Integer> newMap();
-
     @Setup(Level.Iteration)
     public void initializeMap() {
         map = newMap();
-        while (map.size() < mapSize) {
-            map.put(random.nextInt(), 1);
-        }
+        resetMap();
     }
 
-    @Setup(Level.Invocation)
-    public void selectKey() {
-        nextKey = random.nextInt();
-    }
+    protected abstract Map<Integer, Integer> newMap();
 
     @TearDown(Level.Invocation)
     public void resetMap() {
@@ -39,6 +32,11 @@ public abstract class AbstractMapBenchmarkBase {
         while (map.size() > mapSize) {
             map.remove(random.nextInt());
         }
+    }
+
+    @Setup(Level.Invocation)
+    public void selectKey() {
+        nextKey = random.nextInt();
     }
 
     @Benchmark

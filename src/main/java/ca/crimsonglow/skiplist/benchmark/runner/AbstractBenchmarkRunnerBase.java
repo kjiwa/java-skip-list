@@ -15,15 +15,20 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractBenchmarkRunnerBase {
+    private CSVPrinter printer;
+
+    protected abstract void run() throws RunnerException, IOException;
+
+    protected void createReport() throws IOException {
+        BufferedWriter writer = Files.newBufferedWriter(Paths.get(getResultsCsvFilename()));
+        printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(getResultsCsvHeader()));
+    }
+
     protected abstract String getResultsCsvFilename();
 
     protected abstract String[] getResultsCsvHeader();
 
-    protected abstract Object[] getRecord(Map.Entry<String, Collection<RunResult>> entry, RunResult result);
-
-    protected abstract void run() throws RunnerException, IOException;
-
-    protected void report(Collection<RunResult> results) throws IOException {
+    protected void appendResults(Collection<RunResult> results) throws IOException {
         // Aggregate results by benchmark.
         Map<String, Collection<RunResult>> resultsByBenchmark = new HashMap<>();
         for (RunResult result : results) {
@@ -36,14 +41,12 @@ public abstract class AbstractBenchmarkRunnerBase {
         }
 
         // Write results to CSV.
-        BufferedWriter writer = Files.newBufferedWriter(Paths.get(getResultsCsvFilename()));
-        CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT.withHeader(getResultsCsvHeader()));
         for (Map.Entry<String, Collection<RunResult>> entry : resultsByBenchmark.entrySet()) {
             for (RunResult result : entry.getValue()) {
                 printer.printRecord(getRecord(entry, result));
             }
         }
-
-        printer.flush();
     }
+
+    protected abstract Object[] getRecord(Map.Entry<String, Collection<RunResult>> entry, RunResult result);
 }

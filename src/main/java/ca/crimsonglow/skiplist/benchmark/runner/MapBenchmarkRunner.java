@@ -32,7 +32,8 @@ public class MapBenchmarkRunner extends AbstractBenchmarkRunnerBase {
                 .include(TreeMapBenchmark.class.getSimpleName())
                 .build();
 
-        report(new Runner(opts).run());
+        createReport();
+        appendResults(new Runner(opts).run());
     }
 
     @Override

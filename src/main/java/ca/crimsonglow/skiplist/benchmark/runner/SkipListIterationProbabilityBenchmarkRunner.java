@@ -8,7 +8,6 @@ import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -25,6 +24,20 @@ public class SkipListIterationProbabilityBenchmarkRunner extends AbstractBenchma
     }
 
     @Override
+    protected void run() throws RunnerException, IOException {
+        createReport();
+        for (double p = ITERATION_PROBABILITY_MIN; p <= ITERATION_PROBABILITY_MAX; p += ITERATION_PROBABILITY_STEP) {
+            Options opts = new OptionsBuilder()
+                    .forks(1)
+                    .include(SkipListBenchmark.class.getSimpleName())
+                    .param(ITERATION_PROBABILITY_PARAM_NAME, new String[]{Double.toString(p)})
+                    .build();
+
+            appendResults(new Runner(opts).run());
+        }
+    }
+
+    @Override
     protected String getResultsCsvFilename() {
         return RESULTS_CSV_FILENAME;
     }
@@ -37,21 +50,5 @@ public class SkipListIterationProbabilityBenchmarkRunner extends AbstractBenchma
     @Override
     protected Object[] getRecord(Map.Entry<String, Collection<RunResult>> entry, RunResult result) {
         return new Object[]{entry.getKey(), result.getParams().getParam(ITERATION_PROBABILITY_PARAM_NAME), result.getPrimaryResult().getScore()};
-    }
-
-    @Override
-    protected void run() throws RunnerException, IOException {
-        Collection<RunResult> results = new ArrayList<>();
-        for (double p = ITERATION_PROBABILITY_MIN; p <= ITERATION_PROBABILITY_MAX; p += ITERATION_PROBABILITY_STEP) {
-            Options opts = new OptionsBuilder()
-                    .forks(1)
-                    .include(SkipListBenchmark.class.getSimpleName())
-                    .param(ITERATION_PROBABILITY_PARAM_NAME, new String[]{Double.toString(p)})
-                    .build();
-
-            results.addAll(new Runner(opts).run());
-        }
-
-        report(results);
     }
 }

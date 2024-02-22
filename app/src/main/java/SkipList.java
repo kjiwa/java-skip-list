@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
 
@@ -247,11 +248,7 @@ public class SkipList<K extends Comparable<K>, V> implements Map<K, V> {
 
             @SuppressWarnings("unchecked")
             Node<K, V> x = (Node<K, V>) o;
-            if (this.key == null) {
-                return x.key == null;
-            }
-
-            return this.key.equals(x.key) && this.value.equals(x.value);
+            return Objects.equals(this.key, x.key) && Objects.equals(this.value, x.value);
         }
     }
 }
